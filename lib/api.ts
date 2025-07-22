@@ -6,16 +6,25 @@ const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
 
 export const api = {
-
-    auth: {
+  auth: {
     oAuthSignIn: ({
       user,
       provider,
       providerAccountId,
-    }: SigninWithOauthParams) =>
+    }: SignInWithOauthParams) =>
       fetchHandler(`${API_BASE_URL}/auth/signin-with-oauth`, {
         method: "POST",
-        body: JSON.stringify({ user , provider, providerAccountId  }),
+        body: JSON.stringify({ user, provider, providerAccountId }),
+      }),
+    forgotPassword: ({ email }: { email: string }) =>
+      fetchHandler(`${API_BASE_URL}/auth/forgot-password`, {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      }),
+    resetPassword: ({ token, password }: { token: string; password: string }) =>
+      fetchHandler(`${API_BASE_URL}/auth/reset-password`, {
+        method: "POST",
+        body: JSON.stringify({ token, password }),
       }),
   },
 
@@ -42,7 +51,7 @@ export const api = {
         method: "DELETE",
       }),
   },
-  
+
   account: {
     getAll: () => fetchHandler(`${API_BASE_URL}/accounts`),
     getById: (id: string) => fetchHandler(`${API_BASE_URL}/accounts/${id}`),
@@ -66,5 +75,4 @@ export const api = {
         method: "DELETE",
       }),
   },
-
 };
