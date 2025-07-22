@@ -1,14 +1,17 @@
 import mongoose, { Mongoose } from "mongoose";
 import logger from "./logger";
+import "@/database/user.model";
+import "@/database/account.model";
+import "@/database/password-reset.model";
 
 interface Cached {
-  Conn: Mongoose | null;
+  conn: Mongoose | null;
   promise: Promise<Mongoose> | null;
 }
 
-const MONGOSE_URI = process.env.MONGODB_URI as string;
+const MONGODB_URI = process.env.MONGODB_URI as string;
 
-if (!MONGOSE_URI) {
+if (!MONGODB_URI) {
   throw new Error(
     "Please define the MONGODB_URI environment variable inside .env.local"
   );
@@ -21,32 +24,31 @@ declare global {
 let cached = (global as any).mongoose;
 
 if (!cached) {
-  cached = (global as any).mongoose = { Conn: null, promise: null };
+  cached = global.mongoose = { conn: null, promise: null };
 }
 
-const dbconnect = async (): Promise<Mongoose> => {
-  if (cached.Conn) {
-    logger.debug("Using cached Mongoose instance");
-    return cached.Conn;
-  }
-
+const dbConnect = async (): Promise<Mongoose> => {
   if (!cached.promise) {
     cached.promise = mongoose
-       .connect(MONGOSE_URI, {
-        dbName:`salaseh`,
+      .connect(MONGODB_URI, {
+        dbName: "salaseh",
       })
       .then((result) => {
-        logger.debug("New Mongoose connection established");
+        logger.info("Connected to MongoDB");
         return result;
       })
-        .catch((error) => {
-            logger.error("Mongoose connection error:", error);
-            throw error;
-        });
+      .catch((error) => {
+        logger.error("Error connecting to MongoDB", error);
+        throw error;
+      });
   }
-    cached.Conn = await cached.promise;
-    return cached.Conn;
+  cached.conn = await cached.promise;
 
+  if (cached.conn) {
+    logger.debug("Using cached Mongoose instance");
+  }
+
+  return cached.conn;
 };
 
-export default dbconnect;
+export default dbConnect;

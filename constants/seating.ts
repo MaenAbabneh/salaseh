@@ -12,8 +12,19 @@ export const SEAT_STATUS = {
 } as const;
 
 export const PRICE_TIERS = {
-  VIP: "VIP",
-  PREMIUM: "Premium",
-  STANDARD: "Standard",
-  ECONOMY: "Economy",
+  VIP: { name: "VIP", price: 100, color: "#FFD700" },
+  PREMIUM: { name: "Premium", price: 75, color: "#C0C0C0" },
+  STANDARD: { name: "Standard", price: 50, color: "#87CEEB" },
+  ECONOMY: { name: "Economy", price: 25, color: "#98FB98" },
+} as const;
+
+export type SeatStatus = keyof typeof SEAT_STATUS;
+export type PriceTier = keyof typeof PRICE_TIERS;
+
+// Default seating configuration
+export const DEFAULT_SEAT_CONFIG = {
+  width: 40,
+  height: 40,
+  spacing: 10,
+  rowSpacing: 20,
 } as const;

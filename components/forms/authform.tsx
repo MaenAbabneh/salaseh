@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import ROUTES from "@/constants/routes";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { ActionResponse } from "@/types/globle";
+import { ActionResponse } from "@/types/globale";
 
 interface AuthFormProps {
   schema: z.ZodObject<any>;

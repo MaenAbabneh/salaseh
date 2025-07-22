@@ -1,8 +1,8 @@
 "use client";
 
 import { AuthForm } from "@/components/forms/authform";
-import { singUpWithCredentials } from "@/lib/action/auth.action";
-import { SignUpSchema } from "@/lib/validtion";
+import { signUpWithCredentials } from "@/lib/action/auth.action";
+import { SignUpSchema } from "@/lib/validatoin";
 import React from "react";
 
 function page() {
@@ -23,7 +23,7 @@ function page() {
           password: "",
           confirmPassword: "",
         }}
-        onSubmit={singUpWithCredentials}
+        onSubmit={signUpWithCredentials}
       />
     </div>
   );

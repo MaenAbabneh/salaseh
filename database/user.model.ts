@@ -1,30 +1,39 @@
-import {model , models , Schema , Document} from 'mongoose';
-
+import { Schema, model, models, Document } from "mongoose";
 
 export interface IUser {
-    name: string;
-    email: string;
-    image?: string;
-    role?: string;
-    password?: string;
-    passwordRestToken?: string; 
-    passwordRestExpires?: Date; 
+  name: string;
+  username: string;
+  email: string;
+  image?: string;
 }
 
-export interface IUserDocument extends IUser, Document {}
+export interface IUserDoc extends IUser, Document {}
+const userSchema = new Schema<IUser>(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    image: {
+      type: String,
+    },
 
-const userSchema = new Schema<IUser> ({
-    name : {type: String, required: true},
-    email : {type: String, required: true, unique: true},
-    password : {type: String, required: false}, 
-    passwordRestToken : {type: String, required: false},
-    passwordRestExpires : {type: Date, required: false},
-    image : {type: String},
-    role : {type: String, default: 'user'},
-}, {
-    timestamps: true
-})
+    },
+  {
+    timestamps: true,
+  }
+);
 
-const User = models?.User || model<IUser>('User', userSchema);
+const User = models?.User || model<IUser>("User", userSchema);
 
 export default User;
