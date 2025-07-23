@@ -230,14 +230,24 @@ export async function resetPassword(
   }
 
   try {
-    const { token, password } = result.params!;
+    const { password, confirmPassword } = result.params!;
 
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(password, 12);
+    // Extract token from the original params (added from URL)
+    const token = (params as any).token;
+
+    if (!token) {
+      return {
+        success: false,
+        error: {
+          message: "Reset token is required",
+        },
+      };
+    }
 
     const response = (await api.auth.resetPassword({
+      password,
       token,
-      password: hashedPassword,
+      confirmPassword,
     })) as ActionResponse<any>;
 
     if (!response.success) {

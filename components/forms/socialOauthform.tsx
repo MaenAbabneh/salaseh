@@ -54,12 +54,12 @@ const AuthSocailForms = () => {
         >
           <Image
             className="invert-colors object-contain"
-            src={"/icons/github.svg"}
-            alt={"Github logo"}
+            src={"/icons/facebook.svg"}
+            alt={"Facebook logo"}
             width={20}
             height={20}
           />
-          <span>Continue with GitHub</span>
+          <span>Continue with Facebook</span>
         </Button>
 
         <Button

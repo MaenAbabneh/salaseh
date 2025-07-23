@@ -43,6 +43,37 @@ export const forgotPasswordSchema = z.object({
 
 export const ResetPasswordSchema = z
   .object({
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+
+      .refine((val) => /[A-Z]/.test(val), {
+        message: "Password must contain at least one uppercase letter",
+      })
+
+      .refine((val) => /[a-z]/.test(val), {
+        message: "Password must contain at least one lowercase letter",
+      })
+
+      .refine((val) => /[0-9]/.test(val), {
+        message: "Password must contain at least one number letter",
+      })
+
+      .refine((val) => /[^a-zA-Z0-9]/.test(val), {
+        message: "Password must contain at least one symbol letter",
+      }),
+    confirmPassword: z
+      .string()
+      .min(8, "Confirm password must be at least 8 characters long"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+// Schema for API that includes token
+export const ResetPasswordAPISchema = z
+  .object({
     token: z.string().min(1, "Reset token is required"),
     password: z
       .string()

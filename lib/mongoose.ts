@@ -1,8 +1,7 @@
 import mongoose, { Mongoose } from "mongoose";
 import logger from "./logger";
-import "@/database/user.model";
-import "@/database/account.model";
-import "@/database/password-reset.model";
+import "@/database";
+
 
 interface Cached {
   conn: Mongoose | null;

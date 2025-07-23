@@ -1,10 +1,8 @@
-// Export all database models
-export { default as User, type IUser, type IUserDoc } from "./user.model";
+import Account from "./account.model";
+import PasswordReset from "./passwordreset.model";
+import User from "./user.model";
 export {
-  default as Account,
-  type IAccount,
-  type IAccountDoc,
-} from "./account.model";
-
-// Database connection
-export { default as dbConnect } from "../lib/mongoose";
+  Account,
+  User,
+  PasswordReset,
+};

@@ -21,10 +21,18 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ email }),
       }),
-    resetPassword: ({ token, password }: { token: string; password: string }) =>
+    resetPassword: ({
+      password,
+      token,
+      confirmPassword,
+    }: {
+      password: string;
+      token: string;
+      confirmPassword: string;
+    }) =>
       fetchHandler(`${API_BASE_URL}/auth/reset-password`, {
         method: "POST",
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({ password, token, confirmPassword }),
       }),
   },
 

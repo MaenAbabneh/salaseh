@@ -1,7 +1,7 @@
-import { ActionResponse } from "@/types/global";
+import { ActionResponse } from "@/types/globale";
 import logger from "../logger";
-import { handleError } from "./error";
-import { RequestError } from "../http-errors";
+import handleError from "./error";
+import { RequestError } from "../http-error";
 
 export interface FetchOptions extends RequestInit {
   timeout?: number;

@@ -24,14 +24,15 @@ import {
 import { Input } from "@/components/ui/input";
 import ROUTES from "@/constants/routes";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ActionResponse } from "@/types/globale";
 
 interface AuthFormProps {
   schema: z.ZodObject<any>;
   defaultValues: Record<string, any>;
   onSubmit: (data: any) => Promise<ActionResponse>;
-  formType: "SIGN_IN" | "SIGN_UP";
+  formType: "SIGN_IN" | "SIGN_UP" | "RESET_PASSWORD";
+  buttonText?: string;
 }
 
 export function AuthForm({
@@ -39,8 +40,10 @@ export function AuthForm({
   defaultValues,
   onSubmit,
   formType,
+  buttonText: customButtonText,
 }: AuthFormProps) {
   const router = useRouter();
+  const pathname = usePathname();
 
   type FormData = z.infer<typeof schema>;
 
@@ -51,14 +54,31 @@ export function AuthForm({
 
   const handleSubmit: SubmitHandler<FormData> = async (data) => {
     const result = await onSubmit(data);
+
     if (result?.success) {
+      // Dynamic success message based on the current page
+      let successMessage = "";
+      let shouldRedirect = true;
+
+      if (pathname?.includes("/forgot-password")) {
+        successMessage = "Password reset link sent successfully!";
+        shouldRedirect = false; // Don't redirect on forgot password
+      } else if (formType === "SIGN_IN") {
+        successMessage = "You have successfully signed in.";
+      } else if (formType === "SIGN_UP") {
+        successMessage = "You have successfully signed up.";
+      } else {
+        successMessage = "Operation completed successfully.";
+      }
+
       toast.success("Success", {
-        description:
-          formType === "SIGN_IN"
-            ? "You have successfully signed in."
-            : "You have successfully signed up.",
+        description: successMessage,
       });
-      router.push(ROUTES.HOME);
+
+      // Only redirect if it's not a forgot password page
+      if (shouldRedirect) {
+        router.push(ROUTES.HOME);
+      }
     } else {
       toast.error(`Error ${result?.statusCode || ""}`, {
         description: result?.error?.message || "Something went wrong",
@@ -66,7 +86,25 @@ export function AuthForm({
     }
   };
 
-  const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
+  const getButtonText = () => {
+    if (customButtonText) return customButtonText;
+    if (pathname?.includes("/forgot-password")) {
+      return "Send Reset Link";
+    }
+    if (formType === "RESET_PASSWORD") {
+      return "Reset Password";
+    }
+    return formType === "SIGN_IN" ? "Sign In" : "Sign Up";
+  };
+
+  const getLoadingText = () => {
+    if (pathname?.includes("/forgot-password")) {
+      return "Sending...";
+    }
+    return formType === "SIGN_IN" ? "Signing In..." : "Signing Up...";
+  };
+
+  const buttonText = getButtonText();
 
   return (
     <Form {...form}>
@@ -121,24 +159,28 @@ export function AuthForm({
           disabled={form.formState.isSubmitting}
           className="w-full h-12 primary-gradient-dark dark:primary-gradient-light text-light-900 font-semibold paragraph-regular hover:opacity-90 transition-opacity duration-200 disabled:opacity-50"
         >
-          {form.formState.isSubmitting
-            ? buttonText === "Sign In"
-              ? "Signing In..."
-              : "Signing Up..."
-            : buttonText}
+          {form.formState.isSubmitting ? getLoadingText() : buttonText}
         </Button>
 
         <div className="text-center mt-6">
           {formType === "SIGN_IN" ? (
-            <p className="paragraph-regular text-dark500_light400">
-              Don't have an account?{" "}
+            <div className="space-y-3">
               <Link
-                href={ROUTES.SIGNUP}
-                className="text-primary-500 hover:text-primary-600 font-medium transition-colors duration-200"
+                href={ROUTES.FORGOT_PASSWORD}
+                className="block text-primary-500 hover:text-primary-600 font-medium transition-colors duration-200 text-sm"
               >
-                Sign Up
+                Forgot your password?
               </Link>
-            </p>
+              <p className="paragraph-regular text-dark500_light400">
+                Don't have an account?{" "}
+                <Link
+                  href={ROUTES.SIGNUP}
+                  className="text-primary-500 hover:text-primary-600 font-medium transition-colors duration-200"
+                >
+                  Sign Up
+                </Link>
+              </p>
+            </div>
           ) : (
             <p className="paragraph-regular text-dark500_light400">
               Already have an account?{" "}
